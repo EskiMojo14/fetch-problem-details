@@ -27,6 +27,12 @@ export class ProblemResponse extends Response {
   }
 }
 
+/**
+ *
+ * @param definitions
+ * @returns
+ */
+// #__NO_SIDE_EFFECTS__
 export function defineProblems<T extends ProblemDefinitions>(
   definitions: ValidateProblemDefinitions<T>,
 ): ProblemFactories<T> {

@@ -2,6 +2,7 @@ import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { SchemaError } from "@standard-schema/utils";
 import type { LooseProblemDetails } from "./types.ts";
 
+// #__NO_SIDE_EFFECTS__
 function makeKeyIsType(issues: StandardSchemaV1.Issue[]) {
   return function keyIsType(
     obj: Record<string, unknown>,
@@ -43,6 +44,7 @@ export const problemDetailsSchema: StandardSchemaV1<LooseProblemDetails> = {
   },
 };
 
+// #__NO_SIDE_EFFECTS__
 export function safeParseSync<TSchema extends StandardSchemaV1<unknown>>(
   schema: TSchema,
   value: unknown,
@@ -52,6 +54,7 @@ export function safeParseSync<TSchema extends StandardSchemaV1<unknown>>(
   return result;
 }
 
+// #__NO_SIDE_EFFECTS__
 export function parseSync<TSchema extends StandardSchemaV1<unknown>>(
   schema: TSchema,
   value: unknown,
