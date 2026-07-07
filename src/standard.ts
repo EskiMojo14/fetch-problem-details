@@ -1,6 +1,6 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { SchemaError } from "@standard-schema/utils";
-import type { LooseProblemDetails } from "./types.ts";
+import type { LooseProblemDetails, LooseAutocomplete } from "./types.ts";
 
 // #__NO_SIDE_EFFECTS__
 function makeKeyIsType(issues: StandardSchemaV1.Issue[]) {
@@ -47,7 +47,7 @@ export const problemDetailsSchema: StandardSchemaV1<LooseProblemDetails> = {
 // #__NO_SIDE_EFFECTS__
 export function safeParseSync<TSchema extends StandardSchemaV1<unknown>>(
   schema: TSchema,
-  value: unknown,
+  value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
 ): StandardSchemaV1.Result<StandardSchemaV1.InferOutput<TSchema>> {
   const result = schema["~standard"].validate(value);
   if (result instanceof Promise) throw new TypeError("Only synchronous validation allowed.");
@@ -57,7 +57,7 @@ export function safeParseSync<TSchema extends StandardSchemaV1<unknown>>(
 // #__NO_SIDE_EFFECTS__
 export function parseSync<TSchema extends StandardSchemaV1<unknown>>(
   schema: TSchema,
-  value: unknown,
+  value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
 ): StandardSchemaV1.InferOutput<TSchema> {
   const result = safeParseSync(schema, value);
   if (result.issues) throw new SchemaError(result.issues);

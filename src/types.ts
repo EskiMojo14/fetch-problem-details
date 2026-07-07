@@ -1,6 +1,12 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import type { ProblemResponse } from "./index.ts";
 
+export type NonReducibleUnknown = {} | null | undefined;
+export namespace LooseAutocomplete {
+  export type Unknown<T> = T | NonReducibleUnknown;
+  export type String<T extends string> = T | (string & {});
+}
+
 /** RFC 9457: Problem Details for HTTP APIs */
 export interface ProblemDetails {
   /** A URI reference that identifies the problem type. */
@@ -43,8 +49,12 @@ export type ValidateProblemDefinitions<T extends ProblemDefinitions> = T & {
 
 export interface ProblemFactory<T extends ProblemDefinition> {
   (...args: Parameters<T["construct"]>): ProblemResponse;
-  parse: (value: unknown) => StandardSchemaV1.InferOutput<T["schema"]>;
-  safeParse: (value: unknown) => StandardSchemaV1.Result<StandardSchemaV1.InferOutput<T["schema"]>>;
+  parse: (
+    value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<T["schema"]>>,
+  ) => StandardSchemaV1.InferOutput<T["schema"]>;
+  safeParse: (
+    value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<T["schema"]>>,
+  ) => StandardSchemaV1.Result<StandardSchemaV1.InferOutput<T["schema"]>>;
 }
 
 export type ProblemFactories<T extends ProblemDefinitions> = {

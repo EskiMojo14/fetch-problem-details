@@ -1,22 +1,31 @@
 import { expect, it, describe } from "vite-plus/test";
 import { ProblemResponse, type LooseProblemDetails, defineProblems } from "./index.ts";
 import * as v from "valibot";
+import { SchemaError } from "@standard-schema/utils";
+
+const problemDetails: LooseProblemDetails = {
+  type: "https://example.com/probs/out-of-credit",
+  title: "You do not have enough credit.",
+  status: 403,
+  detail: "Your current balance is 30, but that costs 50.",
+  instance: "/account/12345/msgs/abc",
+  accounts: ["/account/12345", "/account/67890"],
+};
 
 describe("ProblemResponse", () => {
-  const problemDetails: LooseProblemDetails = {
-    type: "https://example.com/probs/out-of-credit",
-    title: "You do not have enough credit.",
-    detail: "Your current balance is 30, but that costs 50.",
-    instance: "/account/12345/msgs/abc",
-    accounts: ["/account/12345", "/account/67890"],
-  };
   it("should create a ProblemResponse with default status", async () => {
-    const response = ProblemResponse.problem(problemDetails);
+    const response = ProblemResponse.problem({
+      ...problemDetails,
+      status: undefined, // should default to 500
+    });
     expect(response).toBeInstanceOf(Response);
     expect(response).toBeInstanceOf(ProblemResponse);
     expect(response.status).toBe(500);
     expect(response.headers.get("Content-Type")).toBe("application/problem+json");
-    await expect(response.json()).resolves.toEqual(problemDetails);
+    await expect(response.json()).resolves.toEqual({
+      ...problemDetails,
+      status: undefined,
+    });
   });
   it("should create a ProblemResponse with custom status", () => {
     const response = ProblemResponse.problem({
@@ -44,8 +53,9 @@ describe("defineProblems", () => {
       schema: v.object({
         type: v.literal("https://example.com/probs/out-of-credit"),
         title: v.literal("You do not have enough credit."),
+        status: v.literal(403),
         detail: v.string(),
-        instance: v.string(),
+        instance: v.pipe(v.string(), v.toUpperCase()),
         accounts: v.array(v.string()),
       }),
       construct(detail: string, instance: string, accounts: string[]) {
@@ -93,6 +103,7 @@ describe("defineProblems", () => {
       type: "https://example.com/probs/out-of-credit",
       title: "You do not have enough credit.",
       detail: "Your current balance is 30, but that costs 50.",
+      status: 403,
       instance: "/account/12345/msgs/abc",
       accounts: ["/account/12345", "/account/67890"],
     });
@@ -106,8 +117,42 @@ describe("defineProblems", () => {
     await expect(problem.json()).resolves.toEqual({
       type: "https://example.com/probs/custom-init",
       title: "Custom Init Problem",
-      detail: "This is a custom init problem.",
-      instance: "/account/12345/msgs/abc",
+    });
+  });
+  describe("problem.parse", () => {
+    it("should parse a valid problem details object", () => {
+      const parsed = problems.OutOfCredit.parse(problemDetails);
+      expect(parsed).toEqual({
+        ...problemDetails,
+        instance: "/ACCOUNT/12345/MSGS/ABC", // transformed to uppercase
+      });
+    });
+    it("should throw an error for an invalid problem details object", () => {
+      expect(() =>
+        problems.OutOfCredit.parse({
+          ...problemDetails,
+          status: 404, // invalid status
+        }),
+      ).toThrow(SchemaError);
+    });
+  });
+  describe("problem.safeParse", () => {
+    it("should safely parse a valid problem details object", () => {
+      const result = problems.OutOfCredit.safeParse(problemDetails);
+      expect(result).toEqual({
+        value: {
+          ...problemDetails,
+          instance: "/ACCOUNT/12345/MSGS/ABC", // transformed to uppercase
+        },
+      });
+    });
+    it("should return issues for an invalid problem details object", () => {
+      const result = problems.OutOfCredit.safeParse({
+        ...problemDetails,
+        status: 404, // invalid status
+      });
+      expect(result.issues).toBeDefined();
+      expect(result.issues?.length).toBeGreaterThan(0);
     });
   });
 });
