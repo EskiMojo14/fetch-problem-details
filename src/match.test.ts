@@ -8,7 +8,6 @@ const problems = {
   OutOfCredit: defineProblem(
     "https://example.com/probs/out-of-credit",
     v.object({
-      type: v.literal("https://example.com/probs/out-of-credit"),
       title: v.literal("You do not have enough credit."),
       status: v.literal(403),
       detail: v.string(),
@@ -26,7 +25,6 @@ const problems = {
   IAmATeapot: defineProblem(
     "https://example.com/probs/i-am-a-teapot",
     v.object({
-      type: v.literal("https://example.com/probs/i-am-a-teapot"),
       title: v.literal("I'm a teapot."),
       status: v.literal(418),
       detail: v.string(),

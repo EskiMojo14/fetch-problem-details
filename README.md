@@ -39,7 +39,6 @@ export const OutOfCredit = defineProblem(
   "https://example.com/probs/out-of-credit",
   // schema for full problem details
   v.object({
-    type: v.literal("https://example.com/probs/out-of-credit"),
     title: v.literal("You do not have enough credit."),
     status: v.literal(403),
     detail: v.string(),
@@ -61,7 +60,6 @@ export const OutOfCredit = defineProblem(
 export const CustomInitProblem = defineProblem(
   "https://example.com/probs/custom-init",
   v.object({
-    type: v.literal("https://example.com/probs/custom-init"),
     title: v.literal("Custom init problem"),
     status: v.literal(400),
     detail: v.string(),

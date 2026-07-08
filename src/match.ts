@@ -1,13 +1,13 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
-import type { OneOf, ProblemFactory, LooseProblemDetails } from "./types.ts";
+import type { OneOf, Override, ProblemFactory, LooseProblemDetails } from "./types.ts";
 import * as standardSchema from "./standard.ts";
 
 export type ProblemFactories = Array<ProblemFactory> | Record<PropertyKey, ProblemFactory>;
 export type ParsedProblem<TFactories extends ProblemFactories> =
   TFactories extends Array<infer TFactory extends ProblemFactory>
-    ? StandardSchemaV1.InferOutput<TFactory["schema"]>
+    ? Override<StandardSchemaV1.InferOutput<TFactory["schema"]>, { type: TFactory["type"] }>
     : TFactories extends Record<PropertyKey, infer TFactory extends ProblemFactory>
-      ? StandardSchemaV1.InferOutput<TFactory["schema"]>
+      ? Override<StandardSchemaV1.InferOutput<TFactory["schema"]>, { type: TFactory["type"] }>
       : never;
 
 export namespace MatchResult {
@@ -139,7 +139,10 @@ export async function matchProblem<TFactories extends ProblemFactories>(
           ? {
               matched: true,
               isProblem: true,
-              problem: parseResult.value as never,
+              problem: {
+                ...parseResult.value,
+                type, // ensure the type is included in the parsed problem
+              } as never,
               type,
             }
           : {

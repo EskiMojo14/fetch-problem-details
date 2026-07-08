@@ -37,34 +37,18 @@ export function defineProblem<
   schema: TSchema,
   construct: (...args: TArgs) => ProblemConstructResult<TType, TSchema>,
 ): ProblemFactory<TType, TSchema, TArgs> {
-  function parse(value: unknown) {
-    // always make sure the problem details follow RFC 9457, before allowing custom problem definitions to be used
-    standardSchema.parseSync(standardSchema.problemDetailsSchema, value);
-    return standardSchema.parseSync(schema, value);
-  }
   return Object.assign(
     function constructProblem(...args: TArgs) {
       const constructed = construct(...args);
       const [problem, init] = Array.isArray(constructed) ? constructed : [constructed, undefined];
       const withType = { ...problem, type };
-      parse(withType); // validate the problem details before creating a response (but don't use parsed value)
+      // check against RFC first
+      standardSchema.parseSync(standardSchema.problemDetailsSchema, withType);
+      // then check against the provided schema
+      standardSchema.parseSync(schema, withType);
       return ProblemResponse.problem(withType, init);
     },
     {
-      parse,
-      safeParse(value: unknown) {
-        const { issues: baseIssues } = standardSchema.safeParseSync(
-          standardSchema.problemDetailsSchema,
-          value,
-        );
-        const parseResult = standardSchema.safeParseSync(schema, value);
-        if (baseIssues || parseResult.issues) {
-          return {
-            issues: [...(baseIssues ?? []), ...(parseResult.issues ?? [])],
-          };
-        }
-        return { value: parseResult.value };
-      },
       type,
       schema,
     },

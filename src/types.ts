@@ -5,6 +5,8 @@ import type { ProblemResponse } from "./index.ts";
 export type Compute<T> = { [K in keyof T]: T[K] } & unknown;
 export type PickPartial<T, K extends keyof T> = Compute<Partial<Pick<T, K>> & Omit<T, K>>;
 
+export type Override<T, U> = Compute<Omit<T, keyof U> & U>;
+
 export type KeyofUnion<T> = T extends T ? keyof T : never;
 export type OneOf<
   Union extends object,
@@ -60,12 +62,6 @@ export interface ProblemFactory<
   TArgs extends any[] = any[],
 > {
   (...args: TArgs): ProblemResponse;
-  parse: (
-    value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
-  ) => StandardSchemaV1.InferOutput<TSchema>;
-  safeParse: (
-    value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
-  ) => StandardSchemaV1.Result<StandardSchemaV1.InferOutput<TSchema>>;
   type: TType;
   schema: TSchema;
 }

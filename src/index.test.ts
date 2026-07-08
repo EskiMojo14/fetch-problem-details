@@ -1,7 +1,6 @@
 import { expect, it, describe } from "vite-plus/test";
 import { ProblemResponse, type LooseProblemDetails, defineProblem } from "./index.ts";
 import * as v from "valibot";
-import { SchemaError } from "@standard-schema/utils";
 
 const problemDetails: LooseProblemDetails = {
   type: "https://example.com/probs/out-of-credit",
@@ -52,7 +51,6 @@ describe("defineProblem", () => {
     OutOfCredit: defineProblem(
       "https://example.com/probs/out-of-credit",
       v.object({
-        type: v.literal("https://example.com/probs/out-of-credit"),
         title: v.literal("You do not have enough credit."),
         status: v.literal(403),
         detail: v.string(),
@@ -71,7 +69,6 @@ describe("defineProblem", () => {
     CustomInitProblem: defineProblem(
       "https://example.com/probs/custom-init",
       v.object({
-        type: v.literal("https://example.com/probs/custom-init"),
         title: v.literal("Custom Init Problem"),
       }),
       () => [
@@ -113,48 +110,5 @@ describe("defineProblem", () => {
       type: "https://example.com/probs/custom-init",
       title: "Custom Init Problem",
     });
-  });
-  describe("problem.parse", () => {
-    it("should parse a valid problem details object", () => {
-      const parsed = problems.OutOfCredit.parse(problemDetails);
-      expect(parsed).toEqual({
-        ...problemDetails,
-        instance: "/ACCOUNT/12345/MSGS/ABC", // transformed to uppercase
-      });
-    });
-    it("should throw an error for an invalid problem details object", () => {
-      expect(() =>
-        problems.OutOfCredit.parse({
-          ...problemDetails,
-          status: 404, // invalid status
-        }),
-      ).toThrow(SchemaError);
-    });
-  });
-  describe("problem.safeParse", () => {
-    it("should safely parse a valid problem details object", () => {
-      const result = problems.OutOfCredit.safeParse(problemDetails);
-      expect(result).toEqual({
-        value: {
-          ...problemDetails,
-          instance: "/ACCOUNT/12345/MSGS/ABC", // transformed to uppercase
-        },
-      });
-    });
-    it("should return issues for an invalid problem details object", () => {
-      const result = problems.OutOfCredit.safeParse({
-        ...problemDetails,
-        status: 404, // invalid status
-      });
-      expect(result.issues).toBeDefined();
-      expect(result.issues?.length).toBeGreaterThan(0);
-    });
-  });
-  it("has the correct type property", () => {
-    expect(problems.OutOfCredit).toHaveProperty("type", "https://example.com/probs/out-of-credit");
-    expect(problems.CustomInitProblem).toHaveProperty(
-      "type",
-      "https://example.com/probs/custom-init",
-    );
   });
 });
