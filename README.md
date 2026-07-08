@@ -53,7 +53,7 @@ export const OutOfCredit = defineProblem(
       detail,
       instance,
       accounts,
-    } as const),
+    }),
 });
 
 // can also customise ResponseInit, e.g. to add headers
@@ -70,7 +70,7 @@ export const CustomInitProblem = defineProblem(
       title: "Custom init problem",
       status: 400,
       detail,
-    } as const,
+    },
     // init (excluding status, which is set from the problem)
     {
       headers: {
