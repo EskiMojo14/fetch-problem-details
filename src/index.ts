@@ -73,3 +73,4 @@ export function defineProblem<
 
 export type { ProblemDetails, LooseProblemDetails, ProblemFactory } from "./types.ts";
 export { problemDetailsSchema } from "./standard.ts";
+export { matchProblem } from "./match.ts";

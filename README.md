@@ -23,7 +23,9 @@ app.get("/payments/:id", (c) => {
 export default app;
 ```
 
-Also includes a factory builder for declaring problem types ahead of time, with Standard Schema validation and type inference:
+## `defineProblem`
+
+A helper function for defining a problem type with a schema and factory function for constructing problem details.
 
 ```ts
 // problems.ts
@@ -94,4 +96,49 @@ app.get("/payments/:id", (c) => {
 });
 
 export default app;
+```
+
+## `matchProblem`
+
+A function for matching a `Response` against a set of defined problems, returning the matched problem details if any.
+
+```ts
+import * as problems from "./problems";
+import { matchProblem } from "problem-response";
+
+const response = await fetch("/payments/123");
+const matchResult = await matchProblem(response, problems);
+if (matchResult.matched) {
+  console.log("Matched problem type:", matchResult.type);
+  console.log("Problem details:", matchResult.problem);
+} else if (matchResult.isProblem) {
+  console.log("Matched a problem, but not a known type.");
+  console.log("Problem details:", matchResult.problem);
+} else {
+  console.log("Not a problem response.", matchResult.reason);
+}
+```
+
+By default it will also:
+
+- Check that the `Content-Type` header is `application/problem+json`.
+- Check that the `status` code is an expected HTTP error code (4xx or 5xx).
+
+This can be configured by passing options to `matchProblem`:
+
+```ts
+const matchResult = await matchProblem(response, problems, {
+  requireContentType: false,
+  requireErrorStatus: false,
+});
+```
+
+You can also instruct `matchProblem` to clone the response body before parsing, so that it can be read again later:
+
+```ts
+const matchResult = await matchProblem(response, problems, {
+  shouldClone: true,
+});
+
+const body = await response.json(); // can still read the body after matching
 ```

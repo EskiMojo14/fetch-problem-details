@@ -55,6 +55,14 @@ export function safeParseSync<TSchema extends StandardSchemaV1<unknown>>(
 }
 
 // #__NO_SIDE_EFFECTS__
+export async function safeParse<TSchema extends StandardSchemaV1<unknown>>(
+  schema: TSchema,
+  value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
+): Promise<StandardSchemaV1.Result<StandardSchemaV1.InferOutput<TSchema>>> {
+  return schema["~standard"].validate(value);
+}
+
+// #__NO_SIDE_EFFECTS__
 export function parseSync<TSchema extends StandardSchemaV1<unknown>>(
   schema: TSchema,
   value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
@@ -62,4 +70,29 @@ export function parseSync<TSchema extends StandardSchemaV1<unknown>>(
   const result = safeParseSync(schema, value);
   if (result.issues) throw new SchemaError(result.issues);
   return result.value;
+}
+
+// #__NO_SIDE_EFFECTS__
+export async function parse<TSchema extends StandardSchemaV1<unknown>>(
+  schema: TSchema,
+  value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
+): Promise<StandardSchemaV1.InferOutput<TSchema>> {
+  const result = await schema["~standard"].validate(value);
+  if (result.issues) throw new SchemaError(result.issues);
+  return result.value;
+}
+
+// #__NO_SIDE_EFFECTS__
+export function is<TSchema extends StandardSchemaV1<unknown>>(
+  schema: TSchema,
+  value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
+): value is StandardSchemaV1.InferOutput<TSchema> {
+  return !safeParseSync(schema, value).issues;
+}
+
+export function assert<TSchema extends StandardSchemaV1<unknown>>(
+  schema: TSchema,
+  value: LooseAutocomplete.Unknown<StandardSchemaV1.InferInput<TSchema>>,
+): asserts value is StandardSchemaV1.InferOutput<TSchema> {
+  parseSync(schema, value);
 }
