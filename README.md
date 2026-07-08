@@ -32,6 +32,7 @@ import { ExtendedRequest } from "problem-response";
 
 const request = ExtendedRequest.json(
   "/purchase",
+  // request body
   {
     item: 123456,
     quantity: 2,
@@ -91,24 +92,24 @@ export const OutOfCredit = defineProblem(
 });
 
 // can also customise ResponseInit, e.g. to add headers
-export const CustomInitProblem = defineProblem(
-  "https://example.com/probs/custom-init",
+export const IAmATeapot = defineProblem(
+  "https://example.com/probs/i-am-a-teapot",
   v.object({
-    title: v.literal("Custom init problem"),
-    status: v.literal(400),
+    title: v.literal("I am a teapot."),
+    status: v.literal(418),
     detail: v.string(),
   }),
   (detail: string) => [
-    // problem
+    // problem details
     {
-      title: "Custom init problem",
-      status: 400,
+      title: "I am a teapot.",
+      status: 418,
       detail,
     },
-    // init (excluding status, which is set from the problem)
+    // ResponseInit
     {
       headers: {
-        "X-Custom-Header": "Custom value",
+        "X-Teapot": "true",
       },
     }
   ],
