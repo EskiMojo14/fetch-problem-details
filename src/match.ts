@@ -26,7 +26,7 @@ export namespace MatchResult {
     problem: LooseProblemDetails;
     // if it matches a type, but not the schema, we can provide the type and issues
     type?: string;
-    issues?: readonly StandardSchemaV1.Issue[];
+    issues?: ReadonlyArray<StandardSchemaV1.Issue>;
   };
   /** A response that is not a valid problem, or failed validation */
   export type NotAProblem = {
@@ -35,7 +35,7 @@ export namespace MatchResult {
       contentType?: string | null;
       status?: number;
       jsonError?: unknown;
-      issues?: readonly StandardSchemaV1.Issue[];
+      issues?: ReadonlyArray<StandardSchemaV1.Issue>;
     };
     problem?: unknown;
   };
@@ -120,7 +120,7 @@ export async function matchProblem<TFactories extends ProblemFactories>(
   if (requireErrorStatus && (response.status < 400 || response.status >= 600)) {
     return { matched: false, reason: { status: response.status } };
   }
-  const known: ProblemFactory[] = Array.isArray(problems) ? problems : Object.values(problems);
+  const known: Array<ProblemFactory> = Array.isArray(problems) ? problems : Object.values(problems);
 
   if (shouldClone) response = response.clone();
   let body: unknown;

@@ -46,7 +46,7 @@ export class ProblemResponse extends Response {
 export function defineProblem<
   const TType extends string,
   TSchema extends ProblemSchema<TType>,
-  TArgs extends any[],
+  TArgs extends Array<any>,
 >(
   type: TType,
   schema: TSchema,

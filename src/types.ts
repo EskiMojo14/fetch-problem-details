@@ -60,7 +60,7 @@ export type ProblemConstructResult<TType extends string, TSchema extends Problem
 export interface ProblemFactory<
   TType extends string = string,
   TSchema extends ProblemSchema = ProblemSchema,
-  TArgs extends any[] = any[],
+  TArgs extends Array<any> = Array<any>,
 > {
   (...args: TArgs): ProblemResponse;
   type: TType;

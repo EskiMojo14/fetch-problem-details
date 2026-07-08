@@ -9,7 +9,7 @@ const problems = {
   OutOfCredit: defineProblem(
     _f.outofCreditType,
     _f.outofCreditSchema,
-    (detail: string, instance: string, accounts: string[]) => ({
+    (detail: string, instance: string, accounts: Array<string>) => ({
       title: "You do not have enough credit.",
       status: 403,
       detail,
