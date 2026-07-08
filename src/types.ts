@@ -1,4 +1,5 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
+
 import type { ProblemResponse } from "./index.ts";
 
 // oxlint-disable-next-line typescript/no-redundant-type-constituents

@@ -1,6 +1,7 @@
 import { expect, it, describe } from "vite-plus/test";
-import { ProblemResponse, defineProblem } from "./index.ts";
+
 import * as _f from "./__fixtures.ts";
+import { ProblemResponse, defineProblem } from "./index.ts";
 
 describe("ProblemResponse", () => {
   it("should create a ProblemResponse with default status", async () => {

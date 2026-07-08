@@ -14,7 +14,10 @@ export default defineConfig({
     options: {
       typeAware: true,
       typeCheck: true,
+      reportUnusedDisableDirectives: "error",
     },
   },
-  fmt: {},
+  fmt: {
+    sortImports: true,
+  },
 });

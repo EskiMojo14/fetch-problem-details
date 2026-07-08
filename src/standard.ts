@@ -1,5 +1,6 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { SchemaError } from "@standard-schema/utils";
+
 import type { LooseProblemDetails, LooseAutocomplete } from "./types.ts";
 
 // #__NO_SIDE_EFFECTS__

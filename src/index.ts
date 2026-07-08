@@ -1,10 +1,10 @@
+import * as standardSchema from "./standard.ts";
 import type {
   LooseProblemDetails,
   ProblemConstructResult,
   ProblemFactory,
   ProblemSchema,
 } from "./types.ts";
-import * as standardSchema from "./standard.ts";
 
 export class ProblemResponse extends Response {
   static problem(
@@ -48,10 +48,7 @@ export function defineProblem<
       standardSchema.parseSync(schema, withType);
       return ProblemResponse.problem(withType, init);
     },
-    {
-      type,
-      schema,
-    },
+    { type, schema },
   );
 }
 

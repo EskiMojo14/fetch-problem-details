@@ -1,6 +1,7 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
-import type { OneOf, Override, ProblemFactory, LooseProblemDetails } from "./types.ts";
+
 import * as standardSchema from "./standard.ts";
+import type { OneOf, Override, ProblemFactory, LooseProblemDetails } from "./types.ts";
 
 export type ProblemFactories = Array<ProblemFactory> | Record<PropertyKey, ProblemFactory>;
 export type ParsedProblem<TFactories extends ProblemFactories> =
