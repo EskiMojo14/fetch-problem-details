@@ -28,15 +28,15 @@ const response = ProblemResponse.problem(
 );
 
 // equivalent to:
-const response = new Response(
-  JSON.stringify({
+const response = Response.json(
+  {
     type: "https://example.com/probs/out-of-credit",
     title: "You do not have enough credit.",
     status: 403,
     detail: "Your current balance is 30, but that costs 50.",
     instance: "/account/12345/msgs/abc",
     accounts: ["/account/12345", "/account/67890"],
-  }),
+  },
   {
     status: 403,
     headers: {
