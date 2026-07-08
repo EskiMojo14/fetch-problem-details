@@ -2,18 +2,12 @@ import { describe, expect, it } from "vite-plus/test";
 import { matchProblem } from "./match.ts";
 import { defineProblem, ProblemResponse } from "./index.ts";
 import type { LooseProblemDetails } from "./types.ts";
-import * as v from "valibot";
+import * as _f from "./__fixtures.ts";
 
 const problems = {
   OutOfCredit: defineProblem(
-    "https://example.com/probs/out-of-credit",
-    v.object({
-      title: v.literal("You do not have enough credit."),
-      status: v.literal(403),
-      detail: v.string(),
-      instance: v.pipe(v.string(), v.toUpperCase()),
-      accounts: v.array(v.string()),
-    }),
+    _f.outofCreditType,
+    _f.outofCreditSchema,
     (detail: string, instance: string, accounts: string[]) => ({
       title: "You do not have enough credit.",
       status: 403,
@@ -22,55 +16,40 @@ const problems = {
       accounts,
     }),
   ),
-  IAmATeapot: defineProblem(
-    "https://example.com/probs/i-am-a-teapot",
-    v.object({
-      title: v.literal("I'm a teapot."),
-      status: v.literal(418),
-      detail: v.string(),
-      instance: v.string(),
-    }),
-    (detail: string, instance: string) => ({
-      title: "I'm a teapot.",
-      status: 418,
-      detail,
-      instance,
-    }),
-  ),
+  IAmATeapot: defineProblem(_f.iAmATeapotType, _f.iAmATeapotSchema, () => ({
+    title: "I'm a teapot",
+    status: 418,
+  })),
 };
 
 describe("matchProblem", async () => {
   it("should match a known problem", async () => {
-    const response = problems.OutOfCredit("Insufficient funds", "instance-123", [
-      "account1",
-      "account2",
-    ]);
+    const response = problems.OutOfCredit(
+      _f.outOfCreditProblem.detail,
+      _f.outOfCreditProblem.instance,
+      _f.outOfCreditProblem.accounts,
+    );
     const matchResult = await matchProblem(response, problems);
     expect(matchResult.matched).toBe(true);
     expect(matchResult.isProblem).toBe(true);
     expect(matchResult.type).toBe(problems.OutOfCredit.type);
     expect(matchResult.problem).toEqual({
-      type: "https://example.com/probs/out-of-credit",
-      title: "You do not have enough credit.",
-      status: 403,
-      detail: "Insufficient funds",
-      instance: "INSTANCE-123",
-      accounts: ["account1", "account2"],
+      ..._f.outOfCreditProblem,
+      instance: _f.outOfCreditProblem.instance.toUpperCase(), // check that the transform was applied
+      type: _f.outofCreditType,
     });
   });
 
   it("should allow an array of known problems", async () => {
-    const response = problems.IAmATeapot("Short and stout", "instance-456");
+    const response = problems.IAmATeapot();
     const matchResult = await matchProblem(response, [problems.OutOfCredit, problems.IAmATeapot]);
     expect(matchResult.matched).toBe(true);
     expect(matchResult.isProblem).toBe(true);
     expect(matchResult.type).toBe(problems.IAmATeapot.type);
     expect(matchResult.problem).toEqual({
-      type: "https://example.com/probs/i-am-a-teapot",
-      title: "I'm a teapot.",
+      type: _f.iAmATeapotType,
+      title: "I'm a teapot",
       status: 418,
-      detail: "Short and stout",
-      instance: "instance-456",
     });
   });
 
