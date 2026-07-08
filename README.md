@@ -10,7 +10,7 @@ import { ProblemResponse } from "problem-response";
 
 const app = new Hono();
 
-app.get("/payments/:id", (c) => {
+app.get("/purchase", (c) => {
   return ProblemResponse.problem({
     type: "https://example.com/probs/out-of-credit",
     title: "You do not have enough credit.",
@@ -21,6 +21,40 @@ app.get("/payments/:id", (c) => {
 });
 
 export default app;
+```
+
+## `ExtendedRequest`
+
+A subclass of `Request` that adds a static `json()` method for creating a JSON request with the appropriate headers. Method is defaulted to `POST` if not specified.
+
+```ts
+import { ExtendedRequest } from "problem-response";
+
+const request = ExtendedRequest.json(
+  "/purchase",
+  {
+    item: 123456,
+    quantity: 2,
+  },
+  // optional init object
+  {
+    headers: {
+      "X-Custom-Header": "Custom value",
+    },
+  },
+);
+// equivalent to:
+const request = new Request("/purchase", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-Custom-Header": "Custom value",
+  },
+  body: JSON.stringify({
+    item: 123456,
+    quantity: 2,
+  }),
+});
 ```
 
 ## `defineProblem`
@@ -86,7 +120,7 @@ import * as problems from "./problems";
 
 const app = new Hono();
 
-app.get("/payments/:id", (c) => {
+app.get("/purchase", (c) => {
   // constructs a Response instance with the problem details and status code
   return problems.OutOfCredit(
     "Your current balance is 30, but that costs 50.",
@@ -104,9 +138,14 @@ A function for matching a `Response` against a set of defined problems, returnin
 
 ```ts
 import * as problems from "./problems";
-import { matchProblem } from "problem-response";
+import { ExtendedRequest, matchProblem } from "problem-response";
 
-const response = await fetch("/payments/123");
+const response = await fetch(
+  ExtendedRequest.json("/purchase", {
+    item: 123456,
+    quantity: 2,
+  }),
+);
 const matchResult = await matchProblem(response, problems);
 if (matchResult.matched) {
   console.log("Matched problem type:", matchResult.type);

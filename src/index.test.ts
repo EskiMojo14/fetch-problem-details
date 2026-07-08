@@ -1,7 +1,36 @@
 import { expect, it, describe } from "vite-plus/test";
 
 import * as _f from "./__fixtures.ts";
-import { ProblemResponse, defineProblem } from "./index.ts";
+import { ExtendedRequest, ProblemResponse, defineProblem } from "./index.ts";
+
+describe("ExtendedRequest", () => {
+  it("should create an ExtendedRequest with JSON body and default headers", async () => {
+    const request = ExtendedRequest.json("https://example.com/test", { key: "value" });
+    expect(request).toBeInstanceOf(Request);
+    expect(request).toBeInstanceOf(ExtendedRequest);
+    expect(request.method).toBe("POST");
+    expect(request.headers.get("Content-Type")).toBe("application/json");
+    await expect(request.json()).resolves.toEqual({ key: "value" });
+  });
+
+  it("should respect custom headers and method", async () => {
+    const request = ExtendedRequest.json(
+      "https://example.com/test",
+      { key: "value" },
+      {
+        method: "PUT",
+        headers: {
+          "X-Custom-Header": "CustomValue",
+          "Content-Type": "text/plain", // should not override this
+        },
+      },
+    );
+    expect(request.method).toBe("PUT");
+    expect(request.headers.get("X-Custom-Header")).toBe("CustomValue");
+    expect(request.headers.get("Content-Type")).toBe("text/plain");
+    await expect(request.json()).resolves.toEqual({ key: "value" });
+  });
+});
 
 describe("ProblemResponse", () => {
   it("should create a ProblemResponse with default status", async () => {

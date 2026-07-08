@@ -6,6 +6,21 @@ import type {
   ProblemSchema,
 } from "./types.ts";
 
+type RequestInfo = ConstructorParameters<typeof Request>[0];
+
+export class ExtendedRequest extends Request {
+  static json(input: RequestInfo, body: any, init?: RequestInit): ExtendedRequest {
+    const headers = new Headers(init?.headers);
+    if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+    return new ExtendedRequest(input, {
+      ...init,
+      method: init?.method ?? "POST",
+      body: JSON.stringify(body),
+      headers,
+    });
+  }
+}
+
 export class ProblemResponse extends Response {
   static problem(
     problem: LooseProblemDetails,
