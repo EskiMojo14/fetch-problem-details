@@ -27,6 +27,8 @@ export default app;
 
 A helper function for defining a problem type with a schema and factory function for constructing problem details.
 
+**Note: Asynchronous schema validation is not supported. The schema must be synchronous.**
+
 ```ts
 // problems.ts
 import * as v from "valibot";
