@@ -1,26 +1,50 @@
 # problem-response
 
-An implementation of [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457) for TypeScript, providing a `ProblemResponse` (subclass of `Response`) for creating HTTP responses with problem details.
+An implementation of [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457) for TypeScript.
 
-For example, with Hono:
+## `ProblemResponse`
+
+A subclass of `Response` that adds a static `problem()` method for creating a problem response with the appropriate headers.
 
 ```ts
-import { Hono } from "hono";
 import { ProblemResponse } from "problem-response";
 
-const app = new Hono();
-
-app.get("/purchase", (c) => {
-  return ProblemResponse.problem({
+const response = ProblemResponse.problem(
+  // problem details
+  {
     type: "https://example.com/probs/out-of-credit",
     title: "You do not have enough credit.",
     status: 403,
+    detail: "Your current balance is 30, but that costs 50.",
     instance: "/account/12345/msgs/abc",
     accounts: ["/account/12345", "/account/67890"],
-  });
-});
+  },
+  // optional init object
+  {
+    headers: {
+      "X-Custom-Header": "Custom value",
+    },
+  },
+);
 
-export default app;
+// equivalent to:
+const response = new Response(
+  JSON.stringify({
+    type: "https://example.com/probs/out-of-credit",
+    title: "You do not have enough credit.",
+    status: 403,
+    detail: "Your current balance is 30, but that costs 50.",
+    instance: "/account/12345/msgs/abc",
+    accounts: ["/account/12345", "/account/67890"],
+  }),
+  {
+    status: 403,
+    headers: {
+      "Content-Type": "application/problem+json",
+      "X-Custom-Header": "Custom value",
+    },
+  },
+);
 ```
 
 ## `ExtendedRequest`
