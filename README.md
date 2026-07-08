@@ -1,6 +1,6 @@
 # problem-response
 
-An implementation of [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) for TypeScript, providing a `ProblemResponse` (subclass of `Response`) for creating HTTP responses with problem details.
+An implementation of [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457) for TypeScript, providing a `ProblemResponse` (subclass of `Response`) for creating HTTP responses with problem details.
 
 For example, with Hono:
 
