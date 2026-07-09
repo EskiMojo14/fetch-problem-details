@@ -8,7 +8,17 @@ import type {
 
 type RequestInfo = ConstructorParameters<typeof Request>[0];
 
-export class ExtendedRequest extends Request {
+export class ExtendedRequest extends Request implements PromiseLike<Response> {
+  fetch(init?: RequestInit): Promise<Response> {
+    return fetch(this, init);
+  }
+  // oxlint-disable-next-line unicorn/no-thenable
+  then<TResult1 = Response, TResult2 = never>(
+    onfulfilled?: ((value: Response) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+  ): Promise<TResult1 | TResult2> {
+    return this.fetch().then(onfulfilled, onrejected);
+  }
   static json(input: RequestInfo, body: any, init?: RequestInit): ExtendedRequest {
     const headers = new Headers(init?.headers);
     if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
