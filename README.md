@@ -82,6 +82,24 @@ const request = new Request("/purchase", {
 });
 ```
 
+It also adds a `fetch()` method that returns a `Promise<Response>` for the request, so you can do:
+
+```ts
+const request = ExtendedRequest.json("/purchase", { item: 123456, quantity: 2 });
+const response = await request.fetch();
+// equivalent to:
+const response = await fetch(request);
+```
+
+Additionally, `ExtendedRequest` is thenable, so you can also do:
+
+```ts
+const request = ExtendedRequest.json("/purchase", { item: 123456, quantity: 2 });
+const response = await request;
+// equivalent to:
+const response = await fetch(request);
+```
+
 ## `defineProblem`
 
 A helper function for defining a problem type with a schema and factory function for constructing problem details.
