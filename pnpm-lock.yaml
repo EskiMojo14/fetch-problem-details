@@ -223,8 +223,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       mix-n-matchers:
-        specifier: file:/Users/admin/mix-n-matchers/mix-n-matchers-2.1.1.tgz
-        version: file:../mix-n-matchers/mix-n-matchers-2.1.1.tgz(vitest@4.1.9)
+        specifier: ^2.2.0
+        version: 2.2.0(vitest@4.1.9)
     devDependencies:
       '@types/node':
         specifier: ^25.6.2
@@ -1040,9 +1040,8 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  mix-n-matchers@file:../mix-n-matchers/mix-n-matchers-2.1.1.tgz:
-    resolution: {integrity: sha512-NFQZiwX5RYnn8RrwwoUz6UGWTVWQ2zbeqSkyDUJ+T/JXUYFW+8nyyfp3Hq6EdvhnFK6SqTUr91x3+da3EoDG5w==, tarball: file:../mix-n-matchers/mix-n-matchers-2.1.1.tgz}
-    version: 2.1.1
+  mix-n-matchers@2.2.0:
+    resolution: {integrity: sha512-THur78UHsXn1miDZdkInJD6f85Oi+15Hz6N0GVxXMrMENmjlB3OIWKSqHYPtRG/ecxMkHVZMfpVUN1HU9lQ+SA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
       jest: '>=28.0.0'
@@ -1764,7 +1763,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  mix-n-matchers@file:../mix-n-matchers/mix-n-matchers-2.1.1.tgz(vitest@4.1.9):
+  mix-n-matchers@2.2.0(vitest@4.1.9):
     dependencies:
       '@jest/expect-utils': 30.4.1
       jest-matcher-utils: 30.4.1
