@@ -47,41 +47,6 @@ const response = Response.json(
 );
 ```
 
-## `FetchableRequest`
-
-A subclass of `Request` with a `fetch()` method that returns a `Promise<Response>`. It's also thenable, so you can `await` it directly.
-
-For consistency with `Response`, it also adds a static `json()` method for creating a JSON request with the appropriate headers (defaulting the method to `POST`).
-
-```ts
-import { FetchableRequest } from "problem-response";
-
-const request = FetchableRequest.json(
-  "/purchase",
-  { item: 123456, quantity: 2 },
-  {
-    headers: {
-      "X-Custom-Header": "Custom value",
-    },
-  },
-);
-// equivalent to:
-const request = new FetchableRequest("/purchase", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-Custom-Header": "Custom value",
-  },
-  body: JSON.stringify({ item: 123456, quantity: 2 }),
-});
-
-const response = await request;
-// equivalent to:
-const response = await request.fetch();
-// equivalent to:
-const response = await fetch(request);
-```
-
 ## `defineProblem`
 
 A helper function for defining a problem type with a schema and factory function for constructing problem details.
@@ -203,4 +168,39 @@ const matchResult = await matchProblem(response, problems, {
 });
 
 const body = await response.json(); // can still read the body after matching
+```
+
+## `FetchableRequest`
+
+A subclass of `Request` with a `fetch()` method that returns a `Promise<Response>`. It's also thenable, so you can `await` it directly.
+
+For consistency with `Response`, it also adds a static `json()` method for creating a JSON request with the appropriate headers (defaulting the method to `POST`).
+
+```ts
+import { FetchableRequest } from "problem-response";
+
+const request = FetchableRequest.json(
+  "/purchase",
+  { item: 123456, quantity: 2 },
+  {
+    headers: {
+      "X-Custom-Header": "Custom value",
+    },
+  },
+);
+// equivalent to:
+const request = new FetchableRequest("/purchase", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-Custom-Header": "Custom value",
+  },
+  body: JSON.stringify({ item: 123456, quantity: 2 }),
+});
+
+const response = await request;
+// equivalent to:
+const response = await request.fetch();
+// equivalent to:
+const response = await fetch(request);
 ```
