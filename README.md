@@ -1,4 +1,4 @@
-# problem-response
+# fetch-problem-details
 
 An implementation of [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457) for TypeScript.
 
@@ -7,7 +7,7 @@ An implementation of [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457) f
 A subclass of `Response` that adds a static `problem()` method for creating a problem response with the appropriate headers.
 
 ```ts
-import { ProblemResponse } from "problem-response";
+import { ProblemResponse } from "fetch-problem-details";
 
 const response = ProblemResponse.problem(
   // problem details
@@ -56,7 +56,7 @@ A helper function for defining a problem type with a schema and factory function
 ```ts
 // problems.ts
 import * as v from "valibot";
-import { defineProblem } from "problem-response";
+import { defineProblem } from "fetch-problem-details";
 
 export const OutOfCredit = defineProblem(
   // problem type URI
@@ -128,7 +128,7 @@ A function for matching a `Response` against a set of defined problems, returnin
 
 ```ts
 import * as problems from "./problems";
-import { FetchableRequest, matchProblem } from "problem-response";
+import { FetchableRequest, matchProblem } from "fetch-problem-details";
 
 const response = await FetchableRequest.json("/purchase", {
   item: 123456,
@@ -177,7 +177,7 @@ A subclass of `Request` with a `fetch()` method that returns a `Promise<Response
 For consistency with `Response`, it also adds a static `json()` method for creating a JSON request with the appropriate headers (defaulting the method to `POST`).
 
 ```ts
-import { FetchableRequest } from "problem-response";
+import { FetchableRequest } from "fetch-problem-details";
 
 const request = FetchableRequest.json(
   "/purchase",

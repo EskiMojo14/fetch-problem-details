@@ -1,16 +1,16 @@
 {
-  "name": "problem-request",
+  "name": "fetch-problem-details",
   "version": "1.0.0",
   "description": "Utilities for creating and handling HTTP Problem Responses in TypeScript.",
-  "homepage": "https://github.com/EskiMojo14/problem-request#readme",
+  "homepage": "https://github.com/EskiMojo14/fetch-problem-details#readme",
   "bugs": {
-    "url": "https://github.com/EskiMojo14/problem-request/issues"
+    "url": "https://github.com/EskiMojo14/fetch-problem-details/issues"
   },
   "license": "MIT",
   "author": "EskiMojo14",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EskiMojo14/problem-request.git"
+    "url": "git+https://github.com/EskiMojo14/fetch-problem-details.git"
   },
   "files": [
     "dist"
