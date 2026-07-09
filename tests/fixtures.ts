@@ -1,14 +1,25 @@
 import * as v from "valibot";
+import { afterAll, afterEach, beforeAll, test as baseTest } from "vite-plus/test";
 
-export const outofCreditType = "https://example.com/probs/out-of-credit" as const;
-export const outofCreditSchema = v.object({
+import { server } from "./mocks/server.ts";
+
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+export const test = baseTest.extend({ server });
+
+export { test as it };
+
+export const outOfCreditType = "https://example.com/probs/out-of-credit" as const;
+export const outOfCreditSchema = v.object({
   title: v.literal("You do not have enough credit."),
   status: v.literal(403),
   detail: v.string(),
   instance: v.pipe(v.string(), v.toUpperCase()), // include a transform, to check it's used
   accounts: v.array(v.string()),
 });
-export type OutOfCreditProblem = v.InferInput<typeof outofCreditSchema>;
+export type OutOfCreditProblem = v.InferInput<typeof outOfCreditSchema>;
 export const outOfCreditProblem = {
   title: "You do not have enough credit.",
   status: 403,

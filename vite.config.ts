@@ -35,8 +35,20 @@ export default defineConfig({
     },
     overrides: [
       {
-        files: ["**/*.test.ts", "**/*.test.tsx"],
+        files: ["**/*.test.ts"],
         plugins: ["eslint", "typescript", "unicorn", "vitest"],
+        rules: {
+          // false positives with imported `it`/`test`
+          "vitest/no-standalone-expect": "off",
+          "no-restricted-imports": [
+            "error",
+            {
+              name: "vite-plus/test",
+              importNames: ["it", "test"],
+              message: "Use the `it`/`test` from your fixtures file instead.",
+            },
+          ],
+        },
       },
     ],
   },

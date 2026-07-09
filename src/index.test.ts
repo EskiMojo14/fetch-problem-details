@@ -1,7 +1,10 @@
-import { expect, it, describe } from "vite-plus/test";
+import { http, HttpResponse } from "msw";
+import { expect, describe } from "vite-plus/test";
 
-import * as _f from "../tests/__fixtures.ts";
+import * as f from "../tests/fixtures.ts";
 import { ExtendedRequest, ProblemResponse, defineProblem } from "./index.ts";
+
+const { it } = f;
 
 describe("ExtendedRequest", () => {
   it("should create an ExtendedRequest with JSON body and default headers", async () => {
@@ -30,13 +33,35 @@ describe("ExtendedRequest", () => {
     expect(request).toHaveHeader("Content-Type", "text/plain");
     await expect(request).toHaveJSONBody({ key: "value" });
   });
+
+  it("should fetch the request and return a Response", async ({ server }) => {
+    server.use(
+      http.get("https://example.com/test", () => HttpResponse.json({ message: "Hello, world!" })),
+    );
+    const request = new ExtendedRequest("https://example.com/test");
+    const response = await request.fetch();
+    expect(response).toBeInstanceOf(Response);
+    expect(response).toHaveStatus(200);
+    await expect(response).toHaveJSONBody({ message: "Hello, world!" });
+  });
+
+  it("should be thenable and return a Response", async ({ server }) => {
+    server.use(
+      http.get("https://example.com/test", () => HttpResponse.json({ message: "Hello, world!" })),
+    );
+    const request = new ExtendedRequest("https://example.com/test");
+    const response = await request;
+    expect(response).toBeInstanceOf(Response);
+    expect(response).toHaveStatus(200);
+    await expect(response).toHaveJSONBody({ message: "Hello, world!" });
+  });
 });
 
 describe("ProblemResponse", () => {
   it("should create a ProblemResponse with default status", async () => {
     const response = ProblemResponse.problem({
-      ..._f.outOfCreditProblem,
-      type: _f.outofCreditType,
+      ...f.outOfCreditProblem,
+      type: f.outOfCreditType,
       status: undefined, // should default to 500
     });
     expect(response).toBeInstanceOf(Response);
@@ -44,8 +69,8 @@ describe("ProblemResponse", () => {
     expect(response).toHaveStatus(500);
     expect(response).toHaveHeader("Content-Type", "application/problem+json");
     await expect(response).toHaveJSONBody({
-      ..._f.outOfCreditProblem,
-      type: _f.outofCreditType,
+      ...f.outOfCreditProblem,
+      type: f.outOfCreditType,
       status: undefined,
     });
   });
@@ -69,8 +94,8 @@ describe("ProblemResponse", () => {
 describe("defineProblem", () => {
   const problems = {
     OutOfCredit: defineProblem(
-      _f.outofCreditType,
-      _f.outofCreditSchema,
+      f.outOfCreditType,
+      f.outOfCreditSchema,
       (detail: string, instance: string, accounts: Array<string>) => ({
         title: "You do not have enough credit.",
         status: 403,
@@ -79,7 +104,7 @@ describe("defineProblem", () => {
         accounts,
       }),
     ),
-    IAmATeapot: defineProblem(_f.iAmATeapotType, _f.iAmATeapotSchema, () => [
+    IAmATeapot: defineProblem(f.iAmATeapotType, f.iAmATeapotSchema, () => [
       { title: "I'm a teapot", status: 418 },
       {
         headers: {
@@ -99,7 +124,7 @@ describe("defineProblem", () => {
     expect(problem).toBeInstanceOf(ProblemResponse);
     expect(problem).toHaveStatus(403);
     await expect(problem).toHaveJSONBody({
-      type: "https://example.com/probs/out-of-credit",
+      type: f.outOfCreditType,
       title: "You do not have enough credit.",
       detail: "Your current balance is 30, but that costs 50.",
       status: 403,
@@ -114,7 +139,7 @@ describe("defineProblem", () => {
     expect(problem).toHaveStatus(418);
     expect(problem).toHaveHeader("X-Custom-Header", "CustomValue");
     await expect(problem).toHaveJSONBody({
-      type: _f.iAmATeapotType,
+      type: f.iAmATeapotType,
       title: "I'm a teapot",
       status: 418,
     });
