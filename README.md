@@ -54,6 +54,8 @@ A subclass of `Request` with a `fetch()` method that returns a `Promise<Response
 For consistency with `Response`, it also adds a static `json()` method for creating a JSON request with the appropriate headers (defaulting the method to `POST`).
 
 ```ts
+import { FetchableRequest } from "problem-response";
+
 const request = FetchableRequest.json(
   "/purchase",
   { item: 123456, quantity: 2 },
