@@ -112,13 +112,14 @@ export async function matchProblem<TFactories extends ProblemFactories>(
   options: MatchOptions = {},
 ): Promise<MatchResult<TFactories>> {
   const { requireContentType = true, requireErrorStatus = true, shouldClone = false } = options;
+  const { status } = response;
   if (requireContentType) {
     const contentType = response.headers.get("Content-Type");
     if (contentType !== "application/problem+json")
       return { matched: false, reason: { contentType } };
   }
-  if (requireErrorStatus && (response.status < 400 || response.status >= 600)) {
-    return { matched: false, reason: { status: response.status } };
+  if (requireErrorStatus && (status < 400 || status >= 600)) {
+    return { matched: false, reason: { status } };
   }
   const known: Array<ProblemFactory> = Array.isArray(problems) ? problems : Object.values(problems);
 
