@@ -43,4 +43,7 @@ export default defineConfig({
   fmt: {
     sortImports: true,
   },
+  test: {
+    setupFiles: ["./tests/setup.ts"],
+  },
 });
