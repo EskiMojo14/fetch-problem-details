@@ -47,21 +47,16 @@ const response = Response.json(
 );
 ```
 
-## `ExtendedRequest`
+## `FetchableRequest`
 
-A subclass of `Request` that adds a static `json()` method for creating a JSON request with the appropriate headers. Method is defaulted to `POST` if not specified.
+A subclass of `Request` with a `fetch()` method that returns a `Promise<Response>`. It's also thenable, so you can `await` it directly.
+
+For consistency with `Response`, it also adds a static `json()` method for creating a JSON request with the appropriate headers (defaulting the method to `POST`).
 
 ```ts
-import { ExtendedRequest } from "problem-response";
-
-const request = ExtendedRequest.json(
+const request = FetchableRequest.json(
   "/purchase",
-  // request body
-  {
-    item: 123456,
-    quantity: 2,
-  },
-  // optional init object
+  { item: 123456, quantity: 2 },
   {
     headers: {
       "X-Custom-Header": "Custom value",
@@ -69,33 +64,18 @@ const request = ExtendedRequest.json(
   },
 );
 // equivalent to:
-const request = new Request("/purchase", {
+const request = new FetchableRequest("/purchase", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
     "X-Custom-Header": "Custom value",
   },
-  body: JSON.stringify({
-    item: 123456,
-    quantity: 2,
-  }),
+  body: JSON.stringify({ item: 123456, quantity: 2 }),
 });
-```
 
-It also adds a `fetch()` method that returns a `Promise<Response>` for the request, so you can do:
-
-```ts
-const request = ExtendedRequest.json("/purchase", { item: 123456, quantity: 2 });
-const response = await request.fetch();
-// equivalent to:
-const response = await fetch(request);
-```
-
-Additionally, `ExtendedRequest` is thenable, so you can also do:
-
-```ts
-const request = ExtendedRequest.json("/purchase", { item: 123456, quantity: 2 });
 const response = await request;
+// equivalent to:
+const response = await request.fetch();
 // equivalent to:
 const response = await fetch(request);
 ```
@@ -181,14 +161,12 @@ A function for matching a `Response` against a set of defined problems, returnin
 
 ```ts
 import * as problems from "./problems";
-import { ExtendedRequest, matchProblem } from "problem-response";
+import { FetchableRequest, matchProblem } from "problem-response";
 
-const response = await fetch(
-  ExtendedRequest.json("/purchase", {
-    item: 123456,
-    quantity: 2,
-  }),
-);
+const response = await FetchableRequest.json("/purchase", {
+  item: 123456,
+  quantity: 2,
+});
 const matchResult = await matchProblem(response, problems);
 if (matchResult.matched) {
   console.log("Matched problem type:", matchResult.type);
