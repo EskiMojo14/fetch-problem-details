@@ -1,6 +1,6 @@
 import { expect, it, describe } from "vite-plus/test";
 
-import * as _f from "./__fixtures.ts";
+import * as _f from "../tests/__fixtures.ts";
 import { ExtendedRequest, ProblemResponse, defineProblem } from "./index.ts";
 
 describe("ExtendedRequest", () => {
@@ -8,8 +8,8 @@ describe("ExtendedRequest", () => {
     const request = ExtendedRequest.json("https://example.com/test", { key: "value" });
     expect(request).toBeInstanceOf(Request);
     expect(request).toBeInstanceOf(ExtendedRequest);
-    expect(request.method).toBe("POST");
-    expect(request.headers.get("Content-Type")).toBe("application/json");
+    expect(request).toHaveMethod("POST");
+    expect(request).toHaveHeader("Content-Type", "application/json");
     await expect(request.json()).resolves.toEqual({ key: "value" });
   });
 
@@ -25,9 +25,9 @@ describe("ExtendedRequest", () => {
         },
       },
     );
-    expect(request.method).toBe("PUT");
-    expect(request.headers.get("X-Custom-Header")).toBe("CustomValue");
-    expect(request.headers.get("Content-Type")).toBe("text/plain");
+    expect(request).toHaveMethod("PUT");
+    expect(request).toHaveHeader("X-Custom-Header", "CustomValue");
+    expect(request).toHaveHeader("Content-Type", "text/plain");
     await expect(request.json()).resolves.toEqual({ key: "value" });
   });
 });
@@ -41,8 +41,8 @@ describe("ProblemResponse", () => {
     });
     expect(response).toBeInstanceOf(Response);
     expect(response).toBeInstanceOf(ProblemResponse);
-    expect(response.status).toBe(500);
-    expect(response.headers.get("Content-Type")).toBe("application/problem+json");
+    expect(response).toHaveStatus(500);
+    expect(response).toHaveHeader("Content-Type", "application/problem+json");
     await expect(response.json()).resolves.toEqual({
       ..._f.outOfCreditProblem,
       type: _f.outofCreditType,
@@ -53,7 +53,7 @@ describe("ProblemResponse", () => {
     const response = ProblemResponse.problem({
       status: 403,
     });
-    expect(response.status).toBe(403);
+    expect(response).toHaveStatus(403);
   });
   it("respects custom headers and does not override Content-Type if provided", () => {
     const headers = new Headers({
@@ -61,8 +61,8 @@ describe("ProblemResponse", () => {
       "Content-Type": "application/json",
     });
     const response = ProblemResponse.problem({}, { headers });
-    expect(response.headers.get("X-Custom-Header")).toBe("CustomValue");
-    expect(response.headers.get("Content-Type")).toBe("application/json");
+    expect(response).toHaveHeader("X-Custom-Header", "CustomValue");
+    expect(response).toHaveHeader("Content-Type", "application/json");
   });
 });
 
@@ -97,7 +97,7 @@ describe("defineProblem", () => {
     );
     expect(problem).toBeInstanceOf(Response);
     expect(problem).toBeInstanceOf(ProblemResponse);
-    expect(problem.status).toBe(403);
+    expect(problem).toHaveStatus(403);
     await expect(problem.json()).resolves.toEqual({
       type: "https://example.com/probs/out-of-credit",
       title: "You do not have enough credit.",
@@ -111,8 +111,8 @@ describe("defineProblem", () => {
     const problem = problems.IAmATeapot();
     expect(problem).toBeInstanceOf(Response);
     expect(problem).toBeInstanceOf(ProblemResponse);
-    expect(problem.status).toBe(418);
-    expect(problem.headers.get("X-Custom-Header")).toBe("CustomValue");
+    expect(problem).toHaveStatus(418);
+    expect(problem).toHaveHeader("X-Custom-Header", "CustomValue");
     await expect(problem.json()).resolves.toEqual({
       type: _f.iAmATeapotType,
       title: "I'm a teapot",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import * as _f from "./__fixtures.ts";
+import * as _f from "../tests/__fixtures.ts";
 import { defineProblem, ProblemResponse } from "./index.ts";
 import { matchProblem } from "./match.ts";
 import type { LooseProblemDetails } from "./types.ts";
