@@ -1,14 +1,16 @@
-import { describe, expect, it } from "vite-plus/test";
+import { describe, expect } from "vite-plus/test";
 
-import * as _f from "../tests/__fixtures.ts";
+import * as f from "../tests/fixtures.ts";
 import { defineProblem, ProblemResponse } from "./index.ts";
 import { matchProblem } from "./match.ts";
 import type { LooseProblemDetails } from "./types.ts";
 
+const { it } = f;
+
 const problems = {
   OutOfCredit: defineProblem(
-    _f.outofCreditType,
-    _f.outofCreditSchema,
+    f.outOfCreditType,
+    f.outOfCreditSchema,
     (detail: string, instance: string, accounts: Array<string>) => ({
       title: "You do not have enough credit.",
       status: 403,
@@ -17,7 +19,7 @@ const problems = {
       accounts,
     }),
   ),
-  IAmATeapot: defineProblem(_f.iAmATeapotType, _f.iAmATeapotSchema, () => ({
+  IAmATeapot: defineProblem(f.iAmATeapotType, f.iAmATeapotSchema, () => ({
     title: "I'm a teapot",
     status: 418,
   })),
@@ -26,18 +28,18 @@ const problems = {
 describe("matchProblem", async () => {
   it("should match a known problem", async () => {
     const response = problems.OutOfCredit(
-      _f.outOfCreditProblem.detail,
-      _f.outOfCreditProblem.instance,
-      _f.outOfCreditProblem.accounts,
+      f.outOfCreditProblem.detail,
+      f.outOfCreditProblem.instance,
+      f.outOfCreditProblem.accounts,
     );
     const matchResult = await matchProblem(response, problems);
     expect(matchResult.matched).toBe(true);
     expect(matchResult.isProblem).toBe(true);
     expect(matchResult.type).toBe(problems.OutOfCredit.type);
     expect(matchResult.problem).toEqual({
-      ..._f.outOfCreditProblem,
-      instance: _f.outOfCreditProblem.instance.toUpperCase(), // check that the transform was applied
-      type: _f.outofCreditType,
+      ...f.outOfCreditProblem,
+      instance: f.outOfCreditProblem.instance.toUpperCase(), // check that the transform was applied
+      type: f.outOfCreditType,
     });
   });
 
@@ -48,7 +50,7 @@ describe("matchProblem", async () => {
     expect(matchResult.isProblem).toBe(true);
     expect(matchResult.type).toBe(problems.IAmATeapot.type);
     expect(matchResult.problem).toEqual({
-      type: _f.iAmATeapotType,
+      type: f.iAmATeapotType,
       title: "I'm a teapot",
       status: 418,
     });

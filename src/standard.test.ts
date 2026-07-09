@@ -1,5 +1,6 @@
-import { expect, it, describe } from "vite-plus/test";
+import { expect, describe } from "vite-plus/test";
 
+import { it } from "../tests/fixtures.ts";
 import { problemDetailsSchema } from "./standard.ts";
 
 describe("problemDetailsSchema", () => {
