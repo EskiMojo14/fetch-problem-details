@@ -3,20 +3,20 @@ import { expect, describe, it } from "vite-plus/test";
 
 import * as f from "../tests/fixtures.ts";
 import { server } from "../tests/server.ts";
-import { ExtendedRequest, ProblemResponse, defineProblem } from "./index.ts";
+import { FetchableRequest, ProblemResponse, defineProblem } from "./index.ts";
 
-describe("ExtendedRequest", () => {
-  it("should create an ExtendedRequest with JSON body and default headers", async () => {
-    const request = ExtendedRequest.json("https://example.com/test", { key: "value" });
+describe("FetchableRequest", () => {
+  it("should create an FetchableRequest with JSON body and default headers", async () => {
+    const request = FetchableRequest.json("https://example.com/test", { key: "value" });
     expect(request).toBeInstanceOf(Request);
-    expect(request).toBeInstanceOf(ExtendedRequest);
+    expect(request).toBeInstanceOf(FetchableRequest);
     expect(request).toHaveMethod("POST");
     expect(request).toHaveHeader("Content-Type", "application/json");
     await expect(request).toHaveJSONBody({ key: "value" });
   });
 
   it("should respect custom headers and method", async () => {
-    const request = ExtendedRequest.json(
+    const request = FetchableRequest.json(
       "https://example.com/test",
       { key: "value" },
       {
@@ -37,7 +37,7 @@ describe("ExtendedRequest", () => {
     server.use(
       http.get("https://example.com/test", () => HttpResponse.json({ message: "Hello, world!" })),
     );
-    const request = new ExtendedRequest("https://example.com/test");
+    const request = new FetchableRequest("https://example.com/test");
     const response = await request.fetch();
     expect(response).toBeInstanceOf(Response);
     expect(response).toHaveStatus(200);
@@ -48,7 +48,7 @@ describe("ExtendedRequest", () => {
     server.use(
       http.get("https://example.com/test", () => HttpResponse.json({ message: "Hello, world!" })),
     );
-    const request = new ExtendedRequest("https://example.com/test");
+    const request = new FetchableRequest("https://example.com/test");
     const response = await request;
     expect(response).toBeInstanceOf(Response);
     expect(response).toHaveStatus(200);

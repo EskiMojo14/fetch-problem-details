@@ -8,7 +8,7 @@ import type {
 
 type RequestInfo = ConstructorParameters<typeof Request>[0];
 
-export class ExtendedRequest extends Request implements PromiseLike<Response> {
+export class FetchableRequest extends Request implements PromiseLike<Response> {
   fetch(init?: RequestInit): Promise<Response> {
     return fetch(this, init);
   }
@@ -19,10 +19,10 @@ export class ExtendedRequest extends Request implements PromiseLike<Response> {
   ): Promise<TResult1 | TResult2> {
     return this.fetch().then(onfulfilled, onrejected);
   }
-  static json(input: RequestInfo, body: any, init?: RequestInit): ExtendedRequest {
+  static json(input: RequestInfo, body: any, init?: RequestInit): FetchableRequest {
     const headers = new Headers(init?.headers);
     if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
-    return new ExtendedRequest(input, {
+    return new FetchableRequest(input, {
       ...init,
       method: init?.method ?? "POST",
       body: JSON.stringify(body),
