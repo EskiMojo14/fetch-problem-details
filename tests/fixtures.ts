@@ -1,11 +1,4 @@
 import * as v from "valibot";
-import { test as baseTest } from "vite-plus/test";
-
-import { server } from "./mocks/server.ts";
-
-export const test = baseTest.extend({ server });
-
-export { test as it };
 
 export const outOfCreditType = "https://example.com/probs/out-of-credit" as const;
 export const outOfCreditSchema = v.object({

@@ -1,11 +1,9 @@
-import { describe, expect } from "vite-plus/test";
+import { describe, expect, it } from "vite-plus/test";
 
 import * as f from "../tests/fixtures.ts";
 import { defineProblem, ProblemResponse } from "./index.ts";
 import { matchProblem } from "./match.ts";
 import type { LooseProblemDetails } from "./types.ts";
-
-const { it } = f;
 
 const problems = {
   OutOfCredit: defineProblem(

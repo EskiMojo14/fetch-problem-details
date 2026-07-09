@@ -1,10 +1,9 @@
 import { http, HttpResponse } from "msw";
-import { expect, describe } from "vite-plus/test";
+import { expect, describe, it } from "vite-plus/test";
 
 import * as f from "../tests/fixtures.ts";
+import { server } from "../tests/server.ts";
 import { ExtendedRequest, ProblemResponse, defineProblem } from "./index.ts";
-
-const { it } = f;
 
 describe("ExtendedRequest", () => {
   it("should create an ExtendedRequest with JSON body and default headers", async () => {
@@ -34,7 +33,7 @@ describe("ExtendedRequest", () => {
     await expect(request).toHaveJSONBody({ key: "value" });
   });
 
-  it("should fetch the request and return a Response", async ({ server }) => {
+  it("should fetch the request and return a Response", async () => {
     server.use(
       http.get("https://example.com/test", () => HttpResponse.json({ message: "Hello, world!" })),
     );
@@ -45,7 +44,7 @@ describe("ExtendedRequest", () => {
     await expect(response).toHaveJSONBody({ message: "Hello, world!" });
   });
 
-  it("should be thenable and return a Response", async ({ server }) => {
+  it("should be thenable and return a Response", async () => {
     server.use(
       http.get("https://example.com/test", () => HttpResponse.json({ message: "Hello, world!" })),
     );
