@@ -1,11 +1,7 @@
 import * as v from "valibot";
-import { afterAll, afterEach, beforeAll, test as baseTest } from "vite-plus/test";
+import { test as baseTest } from "vite-plus/test";
 
 import { server } from "./mocks/server.ts";
-
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
 
 export const test = baseTest.extend({ server });
 
