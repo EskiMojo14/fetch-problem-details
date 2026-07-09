@@ -124,5 +124,16 @@ describe("matchProblem", async () => {
       expect(matchResult.matched).toBe(false);
       expect(matchResult.reason?.jsonError).toBeInstanceOf(SyntaxError);
     });
+
+    it("should fail if response body is already used", async () => {
+      const response = new Response(JSON.stringify({}), {
+        status: 400,
+        headers: { "Content-Type": "application/problem+json" },
+      });
+      await response.text(); // consume the body
+      const matchResult = await matchProblem(response, problems);
+      expect(matchResult.matched).toBe(false);
+      expect(matchResult.reason?.bodyUsed).toBe(true);
+    });
   });
 });

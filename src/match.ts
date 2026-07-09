@@ -36,6 +36,7 @@ export namespace MatchResult {
       status?: number;
       jsonError?: unknown;
       issues?: ReadonlyArray<StandardSchemaV1.Issue>;
+      bodyUsed?: boolean;
     };
     problem?: unknown;
   };
@@ -120,6 +121,9 @@ export async function matchProblem<TFactories extends ProblemFactories>(
   }
   if (requireErrorStatus && (status < 400 || status >= 600)) {
     return { matched: false, reason: { status } };
+  }
+  if (response.bodyUsed) {
+    return { matched: false, reason: { bodyUsed: true } };
   }
   const known: Array<ProblemFactory> = Array.isArray(problems) ? problems : Object.values(problems);
 
