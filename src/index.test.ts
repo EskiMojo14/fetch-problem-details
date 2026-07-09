@@ -10,7 +10,7 @@ describe("ExtendedRequest", () => {
     expect(request).toBeInstanceOf(ExtendedRequest);
     expect(request).toHaveMethod("POST");
     expect(request).toHaveHeader("Content-Type", "application/json");
-    await expect(request.json()).resolves.toEqual({ key: "value" });
+    await expect(request).toHaveJSONBody({ key: "value" });
   });
 
   it("should respect custom headers and method", async () => {
@@ -28,7 +28,7 @@ describe("ExtendedRequest", () => {
     expect(request).toHaveMethod("PUT");
     expect(request).toHaveHeader("X-Custom-Header", "CustomValue");
     expect(request).toHaveHeader("Content-Type", "text/plain");
-    await expect(request.json()).resolves.toEqual({ key: "value" });
+    await expect(request).toHaveJSONBody({ key: "value" });
   });
 });
 
@@ -43,7 +43,7 @@ describe("ProblemResponse", () => {
     expect(response).toBeInstanceOf(ProblemResponse);
     expect(response).toHaveStatus(500);
     expect(response).toHaveHeader("Content-Type", "application/problem+json");
-    await expect(response.json()).resolves.toEqual({
+    await expect(response).toHaveJSONBody({
       ..._f.outOfCreditProblem,
       type: _f.outofCreditType,
       status: undefined,
@@ -98,7 +98,7 @@ describe("defineProblem", () => {
     expect(problem).toBeInstanceOf(Response);
     expect(problem).toBeInstanceOf(ProblemResponse);
     expect(problem).toHaveStatus(403);
-    await expect(problem.json()).resolves.toEqual({
+    await expect(problem).toHaveJSONBody({
       type: "https://example.com/probs/out-of-credit",
       title: "You do not have enough credit.",
       detail: "Your current balance is 30, but that costs 50.",
@@ -113,7 +113,7 @@ describe("defineProblem", () => {
     expect(problem).toBeInstanceOf(ProblemResponse);
     expect(problem).toHaveStatus(418);
     expect(problem).toHaveHeader("X-Custom-Header", "CustomValue");
-    await expect(problem.json()).resolves.toEqual({
+    await expect(problem).toHaveJSONBody({
       type: _f.iAmATeapotType,
       title: "I'm a teapot",
       status: 418,
