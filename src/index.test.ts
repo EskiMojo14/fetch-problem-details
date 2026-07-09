@@ -6,7 +6,7 @@ import { server } from "../tests/server.ts";
 import { FetchableRequest, ProblemResponse, defineProblem } from "./index.ts";
 
 describe("FetchableRequest", () => {
-  it("should create an FetchableRequest with JSON body and default headers", async () => {
+  it("should create a FetchableRequest with JSON body and default headers", async () => {
     const request = FetchableRequest.json("https://example.com/test", { key: "value" });
     expect(request).toBeInstanceOf(Request);
     expect(request).toBeInstanceOf(FetchableRequest);
