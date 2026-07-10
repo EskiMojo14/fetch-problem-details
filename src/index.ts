@@ -9,8 +9,40 @@ import type {
 
 type RequestInfo = ConstructorParameters<typeof Request>[0];
 
+export type MethodFactory = (
+  input: RequestInfo,
+  init?: Omit<RequestInit, "method">,
+) => FetchableRequest;
+export interface BodyMethodFactory extends MethodFactory {
+  /**
+   * Creates a new `FetchableRequest` instance with the specified JSON body and Content-Type header set to `application/json`.
+   * If the `Content-Type` header is already present in the provided `init` object, it will not be overridden.
+   * Uses the specified HTTP method for the request.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param body - The JSON body to be sent with the request.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  json: (input: RequestInfo, body: any, init?: Omit<RequestInit, "method">) => FetchableRequest;
+  /**
+   * Creates a new `FetchableRequest` instance with the specified FormData body.
+   * Uses the specified HTTP method for the request.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param body - The FormData body to be sent with the request.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  formData: (
+    input: RequestInfo,
+    body: FormData,
+    init?: Omit<RequestInit, "method">,
+  ) => FetchableRequest;
+}
+
 // #__NO_SIDE_EFFECTS__
-function createMethod(method: string) {
+function createMethod(method: string): MethodFactory {
   return function (input: RequestInfo, init?: Omit<RequestInit, "method">) {
     return new FetchableRequest(input, {
       ...init,
@@ -20,19 +52,9 @@ function createMethod(method: string) {
 }
 
 // #__NO_SIDE_EFFECTS__
-function createBodyMethod(method: string) {
+function createBodyMethod(method: string): BodyMethodFactory {
   const factory = createMethod(method);
   return Object.assign(factory, {
-    /**
-     * Creates a new `FetchableRequest` instance with the specified JSON body and Content-Type header set to `application/json`.
-     * If the `Content-Type` header is already present in the provided `init` object, it will not be overridden.
-     * Uses the specified HTTP method for the request.
-     *
-     * @param input - The input for the request, typically a URL or another Request object.
-     * @param body - The JSON body to be sent with the request.
-     * @param init - Optional RequestInit object to customize the request.
-     * @returns A new `FetchableRequest` instance.
-     */
     json(input: RequestInfo, body: any, init?: Omit<RequestInit, "method">) {
       const headers = new Headers(init?.headers);
       if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
@@ -42,15 +64,6 @@ function createBodyMethod(method: string) {
         headers,
       });
     },
-    /**
-     * Creates a new `FetchableRequest` instance with the specified FormData body.
-     * Uses the specified HTTP method for the request.
-     *
-     * @param input - The input for the request, typically a URL or another Request object.
-     * @param body - The FormData body to be sent with the request.
-     * @param init - Optional RequestInit object to customize the request.
-     * @returns A new `FetchableRequest` instance.
-     */
     formData(input: RequestInfo, body: FormData, init?: Omit<RequestInit, "method">) {
       return factory(input, {
         ...init,
