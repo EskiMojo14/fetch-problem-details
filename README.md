@@ -185,7 +185,7 @@ const body = await response.json(); // can still read the body after matching
 
 A subclass of `Request` with a `fetch()` method that returns a `Promise<Response>`. It's also thenable, so you can `await` it directly.
 
-For consistency with `Response`, it also adds a static `json()` method for creating a JSON request with the appropriate headers (defaulting the method to `POST`).
+For consistency with `Response`, it also adds a static `json()` method for creating a JSON request with the appropriate headers (defaulting the method to `POST`), as well as a `formData()` method for creating a form data request.
 
 ```ts
 import { FetchableRequest } from "fetch-problem-details";
@@ -214,4 +214,37 @@ const response = await request;
 const response = await request.fetch();
 // equivalent to:
 const response = await fetch(request);
+
+const formDataRequest = FetchableRequest.formData("/purchase", new FormData(), {
+  headers: {
+    "X-Custom-Header": "Custom value",
+  },
+});
+```
+
+It also includes static methods for each standard HTTP method, e.g. `FetchableRequest.get()`, `FetchableRequest.post()`, etc (including the new QUERY method).
+
+Methods that support bodies will also have a `json()` and `formData()` variant, e.g. `FetchableRequest.post.json()` and `FetchableRequest.post.formData()`.
+
+```ts
+import { FetchableRequest } from "fetch-problem-details";
+
+const response = await FetchableRequest.put.json(
+  "/purchase",
+  { item: 123456, quantity: 2 },
+  {
+    headers: {
+      "X-Custom-Header": "Custom value",
+    },
+  },
+);
+// equivalent to:
+const response = fetch("/purchase", {
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+    "X-Custom-Header": "Custom value",
+  },
+  body: JSON.stringify({ item: 123456, quantity: 2 }),
+});
 ```
