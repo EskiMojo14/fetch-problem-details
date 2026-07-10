@@ -38,9 +38,9 @@
     "mix-n-matchers": "^2.2.2"
   },
   "devDependencies": {
-    "@types/node": "^25.6.2",
+    "@types/node": "^26.1.1",
     "msw": "^2.15.0",
-    "typescript": "^7.0.0",
+    "typescript": "^7.0.2",
     "valibot": "^1.4.2",
     "vite": "catalog:",
     "vite-plus": "catalog:"
