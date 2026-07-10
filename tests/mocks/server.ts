@@ -1,5 +1,5 @@
 import { setupServer } from "msw/node";
 
-import mocks from "./mocks/index.ts";
+import mocks from "./index.ts";
 
 export const server = setupServer(...mocks);
