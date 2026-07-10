@@ -29,10 +29,12 @@
     "dev": "vp pack --watch",
     "test": "vp test",
     "check": "vp check",
-    "prepublishOnly": "vp run build",
+    "prepublishOnly": "vpr build",
     "prepare": "vp config",
     "prepack": "publint",
-    "attw": "attw --profile esm-only"
+    "attw": "attw --profile esm-only",
+    "presize": "vpr build",
+    "size": "size-limit"
   },
   "dependencies": {
     "@standard-schema/spec": "^1.1.0",
@@ -42,9 +44,11 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.4",
+    "@size-limit/preset-small-lib": "^12.1.0",
     "@types/node": "^26.1.1",
     "msw": "^2.15.0",
     "publint": "^0.3.21",
+    "size-limit": "^12.1.0",
     "typescript": "^7.0.2",
     "valibot": "^1.4.2",
     "vite": "catalog:",
