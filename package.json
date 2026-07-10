@@ -30,7 +30,9 @@
     "test": "vp test",
     "check": "vp check",
     "prepublishOnly": "vp run build",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "prepack": "publint",
+    "attw": "attw --profile esm-only"
   },
   "dependencies": {
     "@standard-schema/spec": "^1.1.0",
@@ -39,8 +41,10 @@
     "mix-n-matchers": "^2.2.2"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.4",
     "@types/node": "^26.1.1",
     "msw": "^2.15.0",
+    "publint": "^0.3.21",
     "typescript": "^7.0.2",
     "valibot": "^1.4.2",
     "vite": "catalog:",
