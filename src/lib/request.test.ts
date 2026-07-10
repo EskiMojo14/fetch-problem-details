@@ -1,7 +1,5 @@
-import { http, HttpResponse } from "msw";
 import { expect, describe, it } from "vite-plus/test";
 
-import { server } from "../../tests/server.ts";
 import { FetchableRequest } from "./request.ts";
 
 describe("FetchableRequest", () => {
@@ -43,9 +41,6 @@ describe("FetchableRequest", () => {
   });
 
   it("should fetch the request and return a Response", async () => {
-    server.use(
-      http.get("https://example.com/test", () => HttpResponse.json({ message: "Hello, world!" })),
-    );
     const request = new FetchableRequest("https://example.com/test");
     const response = await request.fetch();
     expect(response).toBeInstanceOf(Response);
@@ -54,9 +49,6 @@ describe("FetchableRequest", () => {
   });
 
   it("should be thenable and return a Response", async () => {
-    server.use(
-      http.get("https://example.com/test", () => HttpResponse.json({ message: "Hello, world!" })),
-    );
     const request = new FetchableRequest("https://example.com/test");
     const response = await request;
     expect(response).toBeInstanceOf(Response);
