@@ -9,6 +9,57 @@ import type {
 
 type RequestInfo = ConstructorParameters<typeof Request>[0];
 
+// #__NO_SIDE_EFFECTS__
+function createMethod(method: string) {
+  return function (input: RequestInfo, init?: Omit<RequestInit, "method">) {
+    return new FetchableRequest(input, {
+      ...init,
+      method,
+    });
+  };
+}
+
+// #__NO_SIDE_EFFECTS__
+function createBodyMethod(method: string) {
+  const factory = createMethod(method);
+  return Object.assign(factory, {
+    /**
+     * Creates a new `FetchableRequest` instance with the specified JSON body and Content-Type header set to `application/json`.
+     * If the `Content-Type` header is already present in the provided `init` object, it will not be overridden.
+     * Uses the specified HTTP method for the request.
+     *
+     * @param input - The input for the request, typically a URL or another Request object.
+     * @param body - The JSON body to be sent with the request.
+     * @param init - Optional RequestInit object to customize the request.
+     * @returns A new `FetchableRequest` instance.
+     */
+    json(input: RequestInfo, body: any, init?: Omit<RequestInit, "method">) {
+      const headers = new Headers(init?.headers);
+      if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+      return factory(input, {
+        ...init,
+        body: JSON.stringify(body),
+        headers,
+      });
+    },
+    /**
+     * Creates a new `FetchableRequest` instance with the specified FormData body.
+     * Uses the specified HTTP method for the request.
+     *
+     * @param input - The input for the request, typically a URL or another Request object.
+     * @param body - The FormData body to be sent with the request.
+     * @param init - Optional RequestInit object to customize the request.
+     * @returns A new `FetchableRequest` instance.
+     */
+    formData(input: RequestInfo, body: FormData, init?: Omit<RequestInit, "method">) {
+      return factory(input, {
+        ...init,
+        body,
+      });
+    },
+  });
+}
+
 /**
  * A Request subclass that can be used as a Promise, allowing you to use `await` directly on it.
  */
@@ -68,6 +119,62 @@ export class FetchableRequest extends Request implements PromiseLike<Response> {
       body,
     });
   }
+  /**
+   * Creates a new `FetchableRequest` instance with the HTTP method set to GET.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  static get = createMethod("GET");
+  /**
+   * Creates a new `FetchableRequest` instance with the HTTP method set to HEAD.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  static head = createMethod("HEAD");
+  /**
+   * Creates a new `FetchableRequest` instance with the HTTP method set to POST.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  static post = createBodyMethod("POST");
+  /**
+   * Creates a new `FetchableRequest` instance with the HTTP method set to PUT.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  static put = createBodyMethod("PUT");
+  /**
+   * Creates a new `FetchableRequest` instance with the HTTP method set to PATCH.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  static patch = createBodyMethod("PATCH");
+  /**
+   * Creates a new `FetchableRequest` instance with the HTTP method set to DELETE.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  static delete = createMethod("DELETE");
+  /**
+   * Creates a new `FetchableRequest` instance with the HTTP method set to QUERY.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  static query = createBodyMethod("QUERY");
 }
 
 /**
