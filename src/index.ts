@@ -34,6 +34,8 @@ export class FetchableRequest extends Request implements PromiseLike<Response> {
    * Creates a new `FetchableRequest` instance with the specified JSON body and Content-Type header set to `application/json`.
    * If the `Content-Type` header is already present in the provided `init` object, it will not be overridden.
    *
+   * @remarks Defaults method to POST if not specified in `init`.
+   *
    * @param input - The input for the request, typically a URL or another Request object.
    * @param body - The JSON body to be sent with the request.
    * @param init - Optional RequestInit object to customize the request.
@@ -47,6 +49,23 @@ export class FetchableRequest extends Request implements PromiseLike<Response> {
       method: init?.method ?? "POST",
       body: JSON.stringify(body),
       headers,
+    });
+  }
+  /**
+   * Creates a new `FetchableRequest` instance with the specified FormData body.
+   *
+   * @remarks Defaults method to POST if not specified in `init`.
+   *
+   * @param input - The input for the request, typically a URL or another Request object.
+   * @param body - The FormData body to be sent with the request.
+   * @param init - Optional RequestInit object to customize the request.
+   * @returns A new `FetchableRequest` instance.
+   */
+  static formData(input: RequestInfo, body: FormData, init?: RequestInit): FetchableRequest {
+    return new FetchableRequest(input, {
+      ...init,
+      method: init?.method ?? "POST",
+      body,
     });
   }
 }
