@@ -19,6 +19,25 @@ function makeKeyIsType(issues: Array<StandardSchemaV1.Issue>) {
   };
 }
 
+/**
+ * The standard schema for RFC 7807 Problem Details.
+ *
+ * This schema defines the structure and validation rules for Problem Details objects as specified in RFC 7807.
+ * It ensures that the fields are of the correct types if present, while allowing for additional custom fields.
+ *
+ * @example
+ * import * as standardSchema from "problem-request/standard";
+ *
+ * const problemDetails = standardSchema.parseSync(standardSchema.problemDetailsSchema, {
+ *   type: "https://example.com/probs/out-of-credit",
+ *   title: "You do not have enough credit.",
+ *   status: 403,
+ *   detail: "Your current balance is 30, but that costs 50.",
+ *   instance: "/account/12345/msgs/abc",
+ * });
+ *
+ * console.log(problemDetails);
+ */
 export const problemDetailsSchema: StandardSchemaV1<LooseProblemDetails> = {
   "~standard": {
     version: 1,
@@ -30,7 +49,7 @@ export const problemDetailsSchema: StandardSchemaV1<LooseProblemDetails> = {
         return {
           issues: [
             {
-              message: "Expected an object for ProblemDetails.",
+              message: `Expected an object, but got ${value === null ? "null" : typeof value}.`,
             },
           ],
         };
