@@ -13,6 +13,7 @@ export default defineConfig({
     exports: true,
   },
   lint: {
+    jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
     options: {
       typeAware: true,
       typeCheck: true,
@@ -23,6 +24,7 @@ export default defineConfig({
       suspicious: "warn",
     },
     rules: {
+      "vite-plus/prefer-vite-plus-imports": "error",
       "typescript/array-type": ["error", { default: "generic" }],
       "typescript/no-unsafe-type-assertion": "off",
       "typescript/consistent-type-imports": ["error", { prefer: "type-imports" }],

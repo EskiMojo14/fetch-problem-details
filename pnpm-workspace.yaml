@@ -2,14 +2,19 @@ allowBuilds:
   esbuild: set this to true or false
   msw: false
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@0.2.4
-  vite-plus: 0.2.4
+  vite: npm:@voidzero-dev/vite-plus-core@0.2.6
+  vite-plus: 0.2.6
+  vitest: 4.1.10
+  "@vitest/browser-playwright": 4.1.10
 minimumReleaseAgeExclude:
   - mix-n-matchers@2.3.0
 overrides:
   vite: "catalog:"
+  vitest: "catalog:"
 peerDependencyRules:
   allowAny:
     - vite
+    - vitest
   allowedVersions:
     vite: "*"
+    vitest: "*"
